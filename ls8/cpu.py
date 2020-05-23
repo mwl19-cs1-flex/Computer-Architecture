@@ -2,12 +2,26 @@
 
 import sys
 
+LDI = 0b10000010
+PRN = 0b01000111
+HLT = 0b00000001
+
 class CPU:
     """Main CPU class."""
 
     def __init__(self):
         """Construct a new CPU."""
-        pass
+        self.reg = [0] * 8
+        self.pc = 0
+        self.ram = [0] * 256
+        self.running = True
+
+    def ram_read(self, MAR):
+        # Need to turn MAR into decimal
+        return self.ram[MAR] 
+
+    def ram_write(self, MAR, MDR):
+        self.ram[MAR] = MDR
 
     def load(self):
         """Load a program into memory."""
@@ -18,18 +32,36 @@ class CPU:
 
         program = [
             # From print8.ls8
-            0b10000010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b00000001, # HLT
+            LDI,
+            0,
+            8,
+            PRN,
+            0,
+            HLT
+            # 0b10000010, # LDI R0,8
+            # 0b00000000,
+            # 0b00001000,
+            # 0b01000111, # PRN R0
+            # 0b00000000,
+            # 0b00000001, # HLT
         ]
 
         for instruction in program:
-            self.ram[address] = instruction
+            self.ram_write(address, instruction)
             address += 1
-
+        # print(self.ram)
+        # for item in self.ram:
+        #     if item == LDI:
+        #         print('ldi')
+        #         print(self.ram[0])
+        #     elif item == PRN:
+        #         print('prn')
+        #         print(self.ram[3])
+        #     elif item == HLT:
+        #         print('hlt')
+        #         print(self.ram[5])
+        #     else:
+        #         pass
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
@@ -62,4 +94,49 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        pass
+        global HLT
+        global PRN
+        global LDI
+
+        ir = self.ram[self.pc]
+        while self.running:
+            if ir == LDI:
+                regu = self.ram_read(self.pc + 1)
+                num = self.ram_read(self.pc + 2)
+                self.reg[regu] = num
+                self.pc += 3
+                ir = self.ram[self.pc]
+            if ir == PRN:
+                regu = self.ram[self.pc + 1]
+                print(self.reg[regu])
+                self.pc += 2
+                ir = self.ram[self.pc]
+            if ir == HLT:
+                self.running = False
+        # Hash tables corresponding to address
+        # item = {key is the address in memory and the value is the 'HLT'}
+        # commands = {
+        # 'hlt' = hlt
+        # }
+        # IR = self.pc
+        # # setting memory to 0
+        # for i in self.memory:
+        #     self.memory[i] = 0
+        # # setting registers to 0 and R7 to 0xF4
+        # for i in self.registers:
+        #     if i != 7:
+        #         self.registers[i] = 0
+        #     else:
+        #         self.registers[i] = 0xF4
+        # while IR not 'HLT':
+        #     self.ram_read(self.pc)
+        #     if self.registers[IR] == 'LDI':
+        #        # run code
+        #         pc += 1
+        #     if self.registers[IR] == 'ADD':
+        #         self.memory[IR+1] + self.memory[IR+2]
+        #         pc += 1
+             
+        # while command is not HLT:
+
+

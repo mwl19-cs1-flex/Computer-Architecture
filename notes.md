@@ -5,15 +5,58 @@ Could we use this week to build an OS?
 
 ### Base 2
 - Binary!
+01010110 == 64 + 16 + 4 + 2
+|||||||1s place
+||||||2s place
+|||||4s place
+||||8s place
+|||16s place
+||32s place
+|64s place
+128s place
+
+67 in binary:
+1000011 - leading 0s don't matter as they don't have a value
+
+33 in binary:
+100001
 
 ### Base 8
 - Octal (rare these days)
+- 0-7 
 
 ### Base 10
-- Decimal! 
+- Decimal! 0-9
 
 ### Base 16
 - Hexadecimal!
+- 0-9, A-F
+
+### Convert Binary to Hex
+10100011 = binary #
+split it half (starts from 1 again in the binary #)
+1010 0011 = two nibbles
+0011 = 3 in decimal, 3 in hex
+1010 = 1 in the 8s, 1 in the 2s, 8+2 = 10 in decimal, a in hex
+A3 hex == 10100011
+0xa3 = 163
+0b1010011 = 163
+
+### Convert Hex to Binary
+c7 to binary!
+C in hex, if a is 10, b is 11, c is 12
+1100 = C value
+0111 = 7 value
+11000111 binary == C7 hex
+
+### How to count in base 16
+0-9 = 0-9
+a-f = 10-15
+
+16 in hex
+0001 0000 is the number in binary
+1   0
+0x10 = 16
 
 ### Base 64
 - Base 64
