@@ -17,51 +17,31 @@ class CPU:
         self.running = True
 
     def ram_read(self, MAR):
-        # Need to turn MAR into decimal
-        return self.ram[MAR] 
+        print(self.ram[MAR])
 
     def ram_write(self, MAR, MDR):
         self.ram[MAR] = MDR
 
-    def load(self):
+    def load(self, program):
         """Load a program into memory."""
 
         address = 0
 
-        # For now, we've just hardcoded a program:
+        with open(program) as f:
+            for line in f:
+                # what_is = line.split("#") # a list of items on that line
+                # what_is_this = line.split("#")[0] # the first item of each line, lots of them blank spaces
+                what_is_that = line.split("#")[0].strip() # first item, with first and last of chars removed!
+                if what_is_that == '':
+                    continue
+                v = int(what_is_that, 2)
+                self.ram_write(address, v)
+                self.ram_read(address)
+                address += 1
 
-        program = [
-            # From print8.ls8
-            LDI,
-            0,
-            8,
-            PRN,
-            0,
-            HLT
-            # 0b10000010, # LDI R0,8
-            # 0b00000000,
-            # 0b00001000,
-            # 0b01000111, # PRN R0
-            # 0b00000000,
-            # 0b00000001, # HLT
-        ]
-
-        for instruction in program:
-            self.ram_write(address, instruction)
-            address += 1
-        # print(self.ram)
-        # for item in self.ram:
-        #     if item == LDI:
-        #         print('ldi')
-        #         print(self.ram[0])
-        #     elif item == PRN:
-        #         print('prn')
-        #         print(self.ram[3])
-        #     elif item == HLT:
-        #         print('hlt')
-        #         print(self.ram[5])
-        #     else:
-        #         pass
+        # for instruction in program:
+        #     self.ram_write(address, instruction)
+        #     address += 1
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
@@ -139,4 +119,92 @@ class CPU:
              
         # while command is not HLT:
 
+
+### LEGACY CODE
+## DAY ONE
+    # def load(self, program):
+    #     """Load a program into memory."""
+
+    #     address = 0
+
+    #     # For now, we've just hardcoded a program:
+
+    #     program = [
+    #         # From print8.ls8
+    #         LDI,
+    #         0,
+    #         8,
+    #         PRN,
+    #         0,
+    #         HLT
+    #         # 0b10000010, # LDI R0,8
+    #         # 0b00000000,
+    #         # 0b00001000,
+    #         # 0b01000111, # PRN R0
+    #         # 0b00000000,
+    #         # 0b00000001, # HLT
+    #     ]
+
+    #     for instruction in program:
+    #         self.ram_write(address, instruction)
+    #         address += 1
+    #     # print(self.ram)
+    #     # for item in self.ram:
+    #     #     if item == LDI:
+    #     #         print('ldi')
+    #     #         print(self.ram[0])
+    #     #     elif item == PRN:
+    #     #         print('prn')
+    #     #         print(self.ram[3])
+    #     #     elif item == HLT:
+    #     #         print('hlt')
+    #     #         print(self.ram[5])
+    #     #     else:
+    #     #         pass
+        # def run(self):
+        # """Run the CPU."""
+        # global HLT
+        # global PRN
+        # global LDI
+
+        # ir = self.ram[self.pc]
+        # while self.running:
+        #     if ir == LDI:
+        #         regu = self.ram_read(self.pc + 1)
+        #         num = self.ram_read(self.pc + 2)
+        #         self.reg[regu] = num
+        #         self.pc += 3
+        #         ir = self.ram[self.pc]
+        #     if ir == PRN:
+        #         regu = self.ram[self.pc + 1]
+        #         print(self.reg[regu])
+        #         self.pc += 2
+        #         ir = self.ram[self.pc]
+        #     if ir == HLT:
+        #         self.running = False
+        # Hash tables corresponding to address
+        # item = {key is the address in memory and the value is the 'HLT'}
+        # commands = {
+        # 'hlt' = hlt
+        # }
+        # IR = self.pc
+        # # setting memory to 0
+        # for i in self.memory:
+        #     self.memory[i] = 0
+        # # setting registers to 0 and R7 to 0xF4
+        # for i in self.registers:
+        #     if i != 7:
+        #         self.registers[i] = 0
+        #     else:
+        #         self.registers[i] = 0xF4
+        # while IR not 'HLT':
+        #     self.ram_read(self.pc)
+        #     if self.registers[IR] == 'LDI':
+        #        # run code
+        #         pc += 1
+        #     if self.registers[IR] == 'ADD':
+        #         self.memory[IR+1] + self.memory[IR+2]
+        #         pc += 1
+             
+        # while command is not HLT:
 
