@@ -15,9 +15,14 @@ class CPU:
         self.pc = 0
         self.ram = [0] * 256
         self.running = True
+        self.dispatch = {
+            HLT: self.dis_hlt,
+            LDI: self.dis_ldi,
+            PRN: self.dis_prn,
+        }
 
     def ram_read(self, MAR):
-        print(self.ram[MAR])
+        return self.ram[MAR]
 
     def ram_write(self, MAR, MDR):
         self.ram[MAR] = MDR
@@ -38,10 +43,6 @@ class CPU:
                 self.ram_write(address, v)
                 self.ram_read(address)
                 address += 1
-
-        # for instruction in program:
-        #     self.ram_write(address, instruction)
-        #     address += 1
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
@@ -74,26 +75,47 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        global HLT
-        global PRN
-        global LDI
-
-        ir = self.ram[self.pc]
         while self.running:
-            if ir == LDI:
-                regu = self.ram_read(self.pc + 1)
-                num = self.ram_read(self.pc + 2)
-                self.reg[regu] = num
-                self.pc += 3
-                ir = self.ram[self.pc]
-            if ir == PRN:
-                regu = self.ram[self.pc + 1]
-                print(self.reg[regu])
-                self.pc += 2
-                ir = self.ram[self.pc]
-            if ir == HLT:
-                self.running = False
-        # Hash tables corresponding to address
+            operand_a = self.ram_read(self.pc + 1)
+            operand_b = self.ram_read(self.pc + 2)
+
+            ir = LDI
+            self.dispatch[ir](operand_a, operand_b)
+
+            ir = PRN
+            self.dispatch[ir](operand_a, operand_b)
+
+            ir = HLT
+            self.dispatch[ir](operand_a, operand_b)
+            # if ir == LDI:
+            #     regu = self.ram_read(self.pc + 1)
+            #     num = self.ram_read(self.pc + 2)
+            #     self.reg[regu] = num
+            #     self.pc += 3
+            #     ir = self.ram[self.pc]
+            # if ir == PRN:
+            #     regu = self.ram[self.pc + 1]
+            #     print(self.reg[regu])
+            #     self.pc += 2
+            #     ir = self.ram[self.pc]
+            # if ir == HLT:
+            #     self.running = False
+
+### DISPATCH FUNCTIONS
+    def dis_ldi(self, reg_a, reg_b):
+        self.reg[reg_a] = reg_b
+    def dis_hlt(self, reg_a, reg_b):
+        self.running = False
+    def dis_prn(self, reg_a, reg_b):
+        print(self.reg[reg_a])
+
+        
+
+
+### LEGACY CODE
+## DAY ONE
+
+# Hash tables corresponding to address
         # item = {key is the address in memory and the value is the 'HLT'}
         # commands = {
         # 'hlt' = hlt
@@ -118,10 +140,6 @@ class CPU:
         #         pc += 1
              
         # while command is not HLT:
-
-
-### LEGACY CODE
-## DAY ONE
     # def load(self, program):
     #     """Load a program into memory."""
 
