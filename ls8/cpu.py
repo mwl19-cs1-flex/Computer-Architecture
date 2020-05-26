@@ -2,12 +2,14 @@
 
 import sys
 
+CALL = 0b01010000
 LDI = 0b10000010
 PRN = 0b01000111
 HLT = 0b00000001
 MUL = 0b10100010
 PUSH = 0b01000101
 POP = 0b01000110
+RET = 0b00010001
 
 class CPU:
     """Main CPU class."""
@@ -19,12 +21,14 @@ class CPU:
         self.ram = [0] * 256
         self.running = True
         self.dispatch = {
+            CALL: self.dis_call,
             HLT: self.dis_hlt,
             LDI: self.dis_ldi,
             MUL: self.dis_mul,
             PRN: self.dis_prn,
             POP: self.dis_pop,
             PUSH: self.dis_push,
+            RET: self.dis_ret,
         }
         self.sp = 7
         self.reg[self.sp] = 0xf4
@@ -93,12 +97,11 @@ class CPU:
 
             try:
                 command = self.dispatch[ir](reg_a, reg_b)
-
                 self.running = command[0]
                 self.pc += command[1]
                 ir = self.ram[self.pc]
             except:
-                print(f'Failure to parse command')
+                print(f'Failure to parse command: {self.ram[ir]}')
                 sys.exit(1)
 
 ### DISPATCH FUNCTIONS
@@ -120,6 +123,18 @@ class CPU:
     def dis_push(self, reg_a, reg_b):
         self.stack_push(reg_a)
         return (True, 2)
+    def dis_call(self, reg_a, reg_b):
+        # reg b since I need pc + 2
+        # call pushes onto a stack
+        self.stack_push(reg_b)
+        # reg a since I need pc + 1
+        subroutine = self.reg[reg_a]
+        return (True, subroutine)
+    def dis_ret(self, reg_a, reg_b):
+        self.stack_pop(reg_a)
+    def dis_add(self, reg_a, reg_b):
+        self.alu('ADD', reg_a, reg_b)
+        return (True, 3)
         
 ### STACK FUNCTIONS
     def stack_pop(self, reg_a):
