@@ -5,6 +5,7 @@ import sys
 LDI = 0b10000010
 PRN = 0b01000111
 HLT = 0b00000001
+MUL = 0b10100010
 
 class CPU:
     """Main CPU class."""
@@ -18,6 +19,7 @@ class CPU:
         self.dispatch = {
             HLT: self.dis_hlt,
             LDI: self.dis_ldi,
+            MUL: self.dis_mul,
             PRN: self.dis_prn,
         }
 
@@ -49,6 +51,8 @@ class CPU:
 
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
+        elif op == "MUL":
+            self.reg[reg_a] = (self.reg[reg_a] * self.reg[reg_b])
         #elif op == "SUB": etc
         else:
             raise Exception("Unsupported ALU operation")
@@ -76,38 +80,34 @@ class CPU:
     def run(self):
         """Run the CPU."""
         while self.running:
-            operand_a = self.ram_read(self.pc + 1)
-            operand_b = self.ram_read(self.pc + 2)
+            reg_a = self.ram_read(self.pc + 1)
+            reg_b = self.ram_read(self.pc + 2)
 
-            ir = LDI
-            self.dispatch[ir](operand_a, operand_b)
+            ir = self.ram[self.pc]
 
-            ir = PRN
-            self.dispatch[ir](operand_a, operand_b)
+            try:
+                command = self.dispatch[ir](reg_a, reg_b)
 
-            ir = HLT
-            self.dispatch[ir](operand_a, operand_b)
-            # if ir == LDI:
-            #     regu = self.ram_read(self.pc + 1)
-            #     num = self.ram_read(self.pc + 2)
-            #     self.reg[regu] = num
-            #     self.pc += 3
-            #     ir = self.ram[self.pc]
-            # if ir == PRN:
-            #     regu = self.ram[self.pc + 1]
-            #     print(self.reg[regu])
-            #     self.pc += 2
-            #     ir = self.ram[self.pc]
-            # if ir == HLT:
-            #     self.running = False
+                self.running = command[0]
+                self.pc += command[1]
+                ir = self.ram[self.pc]
+            except:
+                print(f'Failure to parse command')
+                sys.exit(1)
 
 ### DISPATCH FUNCTIONS
     def dis_ldi(self, reg_a, reg_b):
         self.reg[reg_a] = reg_b
+        return (True, 3)
     def dis_hlt(self, reg_a, reg_b):
         self.running = False
+        return (False, 0)
     def dis_prn(self, reg_a, reg_b):
         print(self.reg[reg_a])
+        return (True, 2)
+    def dis_mul(self, reg_a, reg_b):
+        self.alu('MUL', reg_a, reg_b)
+        return (True, 3)
 
         
 
