@@ -6,6 +6,8 @@ LDI = 0b10000010
 PRN = 0b01000111
 HLT = 0b00000001
 MUL = 0b10100010
+PUSH = 0b01000101
+POP = 0b01000110
 
 class CPU:
     """Main CPU class."""
@@ -21,7 +23,11 @@ class CPU:
             LDI: self.dis_ldi,
             MUL: self.dis_mul,
             PRN: self.dis_prn,
+            POP: self.dis_pop,
+            PUSH: self.dis_push,
         }
+        self.sp = 7
+        self.reg[self.sp] = 0xf4
 
     def ram_read(self, MAR):
         return self.ram[MAR]
@@ -108,6 +114,26 @@ class CPU:
     def dis_mul(self, reg_a, reg_b):
         self.alu('MUL', reg_a, reg_b)
         return (True, 3)
+    def dis_pop(self, reg_a, reg_b):
+        self.stack_pop(reg_a)
+        return (True, 2)
+    def dis_push(self, reg_a, reg_b):
+        self.stack_push(reg_a)
+        return (True, 2)
+        
+### STACK FUNCTIONS
+    def stack_pop(self, reg_a):
+        current_sp = self.reg[self.sp]
+        item = self.ram[current_sp]
+        self.reg[reg_a] = item
+        self.reg[self.sp] += 1
+        
+    def stack_push(self, reg_a):
+        self.reg[self.sp] -= 1
+        current_sp = self.reg[self.sp]
+        self.ram[current_sp] = self.reg[reg_a]
+
+
 
         
 

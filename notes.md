@@ -159,3 +159,72 @@ while not halted:
         print(f'Unknown instruction: {instruction} at address {pc})
         sys.exit(1)
 ```
+
+# Bitwise Operations
+
+-Truth tables exist! 
+
+Not ~
+
+A | Not A
+- - - - -
+0 | 1
+1 | 0
+
+And &
+
+A | B | A and B
+- - - - - - - - 
+0 | 0 | 0
+0 | 1 | 0
+1 | 0 | 0
+1 | 1 | 1
+
+Nand (Not and) ~&
+
+A | B | A nand B
+- - - - - - - - 
+0 | 0 | 1
+0 | 1 | 1
+1 | 0 | 1
+1 | 1 | 0
+
+Or | 
+
+A | B | A or B
+- - - - - - - -
+0 | 0 | 0
+0 | 1 | 1
+1 | 0 | 1
+1 | 1 | 1
+
+Nor (Not or) ~| 
+
+A | B | A nor B
+- - - - - - - -
+0 | 0 | 1
+0 | 1 | 0
+1 | 0 | 0
+1 | 1 | 0
+
+Xor (Exclusive or) ^
+-only true if one or the other is true
+
+A | B | A xor B
+- - - - - - - -
+0 | 0 | 0
+0 | 1 | 1
+1 | 0 | 1
+1 | 1 | 0
+
+## Multi-bit numbers
+
+  11101011
+& 10011101
+-----------
+  10001001
+
+  1101 1010
+^ 1110 0011
+------------
+  0011 1001
